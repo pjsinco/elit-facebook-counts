@@ -1,11 +1,11 @@
 <?php 
 
 /*
-Plugin Name: Facebook Counts
-Plugin URI:  http://URI_Of_Page_Describing_Plugin_and_Updates
+Plugin Name: Elit Facebook Counts (alpha)
+Plugin URI:  https://github.com/pjsinco/elit-facebook-counts
 Description: Get counts of Facebook likes, shares and comments for each post.
 Version:     0.0.1
-Author:      PJS
+Author:      Patrick Sinco
 Author URI:  http://github.com/pjsinco
 License:     GPL2
 */
@@ -65,7 +65,7 @@ function elit_fb_counts_options_page() {
         wp_die('You do not have sufficient permission to access this page.');
     }
 
-    require('includes/options-page-wrapper.php');
+    //require('includes/options-page-wrapper.php');
 
 }
 
