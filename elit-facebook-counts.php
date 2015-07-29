@@ -22,7 +22,7 @@ use Monolog\Handler\StreamHandler;
 
 $logger = new Logger('elit_fb_logger');
 $logger->pushHandler(
-    new StreamHandler(plugin_dir_path(__FILE__) . 'log.text'),
+    new StreamHandler(plugin_dir_path(__FILE__) . 'log.txt'),
     Logger::DEBUG
 );
 $logger->addInfo('hiya: ' . time());
