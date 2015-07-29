@@ -1,9 +1,7 @@
-<h3><?php _e( '2 Column Layout: static (px) reducing of toggle block', 'wp_admin_style' ); ?></h3>
-
 <div class="wrap">
 
     <div id="icon-options-general" class="icon32"></div>
-    <h2><?php esc_attr_e( 'Heading String', 'wp_admin_style' ); ?></h2>
+    <h2>Facebook counts</h2>
 
     <div id="poststuff">
 
@@ -16,10 +14,10 @@
 
                     <div class="postbox">
 
-                        <h3><span>Main Content Header</span></h3>
+                        <h3><span>Details</span></h3>
 
                         <div class="inside">
-                            <p>Lorem ipsum</p>
+                            <p><?php print_r($log); ?></p>
                         </div>
                         <!-- .inside -->
 
@@ -39,10 +37,10 @@
 
                     <div class="postbox">
 
-                        <h3><span>Sidebar Content Header</span></h3>
+                        <h3><span>Details</span></h3>
 
                         <div class="inside">
-                            <p>lorem</p>
+                            <p></p>
                         </div>
                         <!-- .inside -->
 

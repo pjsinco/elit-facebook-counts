@@ -1,0 +1,13 @@
+{
+    "name": "elit/elit-facebook-counts",
+    "description": "Get counts of Facebook likes, shares and comments for each post.",
+    "authors": [
+        {
+            "name": "Patrick Sinco",
+            "email": "psinco@osteopathic.org"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "~1.13"
+     }
+}

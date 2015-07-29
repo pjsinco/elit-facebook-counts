@@ -1,5 +1,7 @@
 <?php 
 
+require_once ( 'vendor/autoload.php' );
+
 /*
 Plugin Name: Elit Facebook Counts (alpha)
 Plugin URI:  https://github.com/pjsinco/elit-facebook-counts
@@ -14,6 +16,15 @@ License:     GPL2
 if (!defined('WPINC')) {
     die;
 }
+
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+$logger = new Logger('elit_fb_logger');
+$logger->pushHandler(
+    new StreamHandler(plugin_dir_path(__FILE__) . 'log.text'),
+    Logger::DEBUG
+);
 
 define('FB_URL', "http://api.facebook.com/restserver.php?method=links." . 
     "getStats&urls=");
@@ -65,7 +76,7 @@ function elit_fb_counts_options_page() {
         wp_die('You do not have sufficient permission to access this page.');
     }
 
-    //require('includes/options-page-wrapper.php');
+    require('includes/options-page-wrapper.php');
 
 }
 
@@ -73,7 +84,7 @@ function elit_fb_counts_options_page() {
 function elit_fb_activation() {
 
     if (!wp_next_scheduled('elit_fb_cron_hook')) {
-        wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
+        wp_schedule_event(time(), 'hourly', 'elit_fb_cron_hook');
     }
 
 }
@@ -82,10 +93,16 @@ register_activation_hook(__FILE__, 'elit_fb_activation');
 
 function elit_fb_process_posts() {
 
+    $logger->addInfo('Starting elit_fb_process_posts: ' . time());
+
     $posts = elit_fb_get_posts();
+    array_push($log, time());
+    array_push($log, 'hiya');
+    $logger->addInfo("\tHave posts? " . !empty($posts));
 
     if ($posts) {
         foreach ($posts as $post) {
+            $logger->addInfo("\t\tProcessing $post->id");
             $stats = array();
             $url = FB_URL . urlencode(get_permalink($post->id));
             $info = wp_remote_get($url);
