@@ -97,8 +97,6 @@ function elit_fb_process_posts() {
     $logger->addInfo('Starting elit_fb_process_posts: ' . time());
 
     $posts = elit_fb_get_posts();
-    array_push($log, time());
-    array_push($log, 'hiya');
     $logger->addInfo("\tHave posts? " . !empty($posts));
 
     if ($posts) {
