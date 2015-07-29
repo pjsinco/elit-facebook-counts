@@ -123,54 +123,69 @@ function elit_fb_process_posts() {
                 $newStats['elit_fb_likes'] != $currentStats['elit_fb_likes'] ||
                 $newStats['elit_fb_comments'] != $currentStats['elit_fb_comments']) {
 
-                array_push(
-                    $report, 
-                    array('title' => get_the_title($post->id))
-                );
+                $logger->addInfo("\t\tPushing item to report ...");
+
+                $reportItem = array();
+                $reportItem['title'] = get_the_title($post->id);
 
                 if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
-                    array_push(
-                        $report, 
-                        array(
-                            'new_share_count' => 
-                                (int) $newStats['elit_fb_shares'] - 
-                                    (int) $currentStats['elit_fb_shares']
-                        )
-                    );
+                    $reportItem['new_share_count'] = 
+                        (int) $newStats['elit_fb_shares'] - 
+                            (int) $currentStats['elit_fb_shares'];
                 } 
         
                 if ($newStats['elit_fb_likes'] != $currentStats['elit_fb_likes']) {
-                    array_push(
-                        $report, 
-                        array(
-                            'new_like_count' => 
-                                (int) $newStats['elit_fb_likes'] - 
-                                    (int) $currentStats['elit_fb_likes']
-                        )
-                    );
+                    $reportItem['new_like_count'] =
+                        (int) $newStats['elit_fb_likes'] - 
+                              (int) $currentStats['elit_fb_likes'];
                 } 
 
                 if ($newStats['elit_fb_comments'] != $currentStats['elit_fb_comments']) {
-                    array_push(
-                        $report, 
-                        array(
-                            'new_comment_count' => 
-                                (int) $newStats['elit_fb_comments'] - 
-                                    (int) $currentStats['elit_fb_comments']
-                        )
-                    );
+                    $reportItem['new_comment_count'] = 
+                        (int) $newStats['elit_fb_comments'] - 
+                            (int) $currentStats['elit_fb_comments'];
                 }
             }
+
+            array_push($report, $reportItem);
     
             update_post_meta($post->id, 'elit_fb', serialize($newStats));
         }
 
-        wp_mail(
+        $emailBody = '';
+        foreach ($report as $item) {
+          $emailBody .= '------------------------------------------' . PHP_EOL;
+          $emailBody .= '                U P D A T E               ' . PHP_EOL;
+          $emailBody .= '------------------------------------------' . PHP_EOL;
+          $emailBody .= PHP_EOL;
+          $emailBody .= $item['title'];
+          if (isset($item['new_like_count'])) {
+              $emailBody .= 'New likes: ' . $item['new_like_count'] . PHP_EOL;
+          }
+          if (isset($item['new_share_count'])) {
+              $emailBody .= 'New shares: ' . $item['new_share_count'] . PHP_EOL;
+          }
+          if (isset($item['new_comment_count'])) {
+              $emailBody .= 'New comments: ' . $item['new_comment_count'] . PHP_EOL;
+          }
+          $emailBody .= PHP_EOL;
+          $emailBody .= '------------------------------------------' . PHP_EOL;
+          $emailBody .= '            N E W   T O T A L S           ' . PHP_EOL;
+          $emailBody .= '------------------------------------------' . PHP_EOL;
+          $emailBody .= 'Likes: ' . $newStats['elit_fb_likes'] . PHP_EOL;
+          $emailBody .= 'Shares: ' . $newStats['elit_fb_shares'] . PHP_EOL;
+          $emailBody .= 'Comments: ' . $newStats['elit_fb_comments'] . PHP_EOL;
+          $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
+        }
+
+        $mailed = wp_mail(
             'psinco@osteopathic.org', 
             'Elit Facebook Counts', 
-            implode('|', $report),
+            $emailBody, 
             'Content-Type: text/plain'
         );
+
+        $logger->addInfo('Mailed? ' . ($mailed ? 'Yes' : 'No'));
         
     }
 
