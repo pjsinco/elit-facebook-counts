@@ -145,9 +145,10 @@ function elit_fb_process_posts() {
                         (int) $newStats['elit_fb_comments'] - 
                             (int) $currentStats['elit_fb_comments'];
                 }
+
+                array_push($report, $reportItem);
             }
 
-            array_push($report, $reportItem);
     
             update_post_meta($post->id, 'elit_fb', serialize($newStats));
         }
@@ -158,7 +159,7 @@ function elit_fb_process_posts() {
           $emailBody .= '                U P D A T E               ' . PHP_EOL;
           $emailBody .= '------------------------------------------' . PHP_EOL;
           $emailBody .= PHP_EOL;
-          $emailBody .= $item['title'];
+          $emailBody .= $item['title'] . PHP_EOL;
           if (isset($item['new_like_count'])) {
               $emailBody .= 'New likes: ' . $item['new_like_count'] . PHP_EOL;
           }
@@ -169,9 +170,7 @@ function elit_fb_process_posts() {
               $emailBody .= 'New comments: ' . $item['new_comment_count'] . PHP_EOL;
           }
           $emailBody .= PHP_EOL;
-          $emailBody .= '------------------------------------------' . PHP_EOL;
-          $emailBody .= '            N E W   T O T A L S           ' . PHP_EOL;
-          $emailBody .= '------------------------------------------' . PHP_EOL;
+          $emailBody .= 'U P D A T E D   T O T A L S' . PHP_EOL;
           $emailBody .= 'Likes: ' . $newStats['elit_fb_likes'] . PHP_EOL;
           $emailBody .= 'Shares: ' . $newStats['elit_fb_shares'] . PHP_EOL;
           $emailBody .= 'Comments: ' . $newStats['elit_fb_comments'] . PHP_EOL;
