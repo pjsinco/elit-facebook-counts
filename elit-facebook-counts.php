@@ -20,12 +20,6 @@ if (!defined('WPINC')) {
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-$logger = new Logger('elit_fb_logger');
-$logger->pushHandler(
-    new StreamHandler(plugin_dir_path(__FILE__) . 'log.txt'),
-    Logger::DEBUG
-);
-$logger->addInfo('hiya: ' . time());
 
 define('FB_URL', "http://api.facebook.com/restserver.php?method=links." . 
     "getStats&urls=");
@@ -85,7 +79,8 @@ function elit_fb_counts_options_page() {
 function elit_fb_activation() {
 
     if (!wp_next_scheduled('elit_fb_cron_hook')) {
-        wp_schedule_event(time(), 'hourly', 'elit_fb_cron_hook');
+      $logger->addInfo('elit_fb_cron_hook scheduled'); 
+        wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
     }
 
 }
@@ -93,6 +88,12 @@ register_activation_hook(__FILE__, 'elit_fb_activation');
 
 
 function elit_fb_process_posts() {
+
+     $logger = new Logger('elit_fb_logger');
+     $logger->pushHandler(
+         new StreamHandler(plugin_dir_path(__FILE__) . 'log.txt'),
+         Logger::DEBUG
+     );
 
     $logger->addInfo('Starting elit_fb_process_posts: ' . time());
 
