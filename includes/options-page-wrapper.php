@@ -17,7 +17,7 @@
                         <h3><span>Details</span></h3>
 
                         <div class="inside">
-                            <p><?php print_r($log); ?></p>
+                            <pre><?php print_r(_get_cron_array()); ?></pre>
                         </div>
                         <!-- .inside -->
 
