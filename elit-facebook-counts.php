@@ -76,7 +76,7 @@ function elit_fb_counts_options_page() {
         wp_die('You do not have sufficient permission to access this page.');
     }
 
-    require('includes/options-page-wrapper.php');
+    //require('includes/options-page-wrapper.php');
 
 }
 
