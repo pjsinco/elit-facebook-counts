@@ -6,7 +6,7 @@ require_once ( 'vendor/autoload.php' );
 Plugin Name: Elit Facebook Counts (alpha)
 Plugin URI:  https://github.com/pjsinco/elit-facebook-counts
 Description: Get counts of Facebook likes, shares and comments for each post.
-Version:     0.0.1
+Version:     0.0.2
 Author:      Patrick Sinco
 Author URI:  http://github.com/pjsinco
 License:     GPL2
@@ -78,6 +78,8 @@ function elit_fb_counts_options_page() {
 
 function elit_fb_activation() {
 
+    elit_fb_process_posts();
+
     if (!wp_next_scheduled('elit_fb_cron_hook')) {
       $logger->addInfo('elit_fb_cron_hook scheduled'); 
         wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
@@ -100,19 +102,76 @@ function elit_fb_process_posts() {
     $posts = elit_fb_get_posts();
     $logger->addInfo("\tHave posts? " . !empty($posts));
 
+    $report = array();
+
     if ($posts) {
         foreach ($posts as $post) {
             $logger->addInfo("\t\tProcessing $post->id");
-            $stats = array();
+            $newStats = array();
             $url = FB_URL . urlencode(get_permalink($post->id));
             $info = wp_remote_get($url);
             $xml = simplexml_load_string($info['body']);
-            $stats['elit_fb_shares'] = (string) $xml->link_stat->share_count;
-            $stats['elit_fb_likes'] = (string) $xml->link_stat->like_count;
-            $stats['elit_fb_comments'] = (string) $xml->link_stat->comment_count;
+            $newStats['elit_fb_shares'] = (string) $xml->link_stat->share_count;
+            $newStats['elit_fb_likes'] = (string) $xml->link_stat->like_count;
+            $newStats['elit_fb_comments'] = (string) $xml->link_stat->comment_count;
+
+            $current = get_post_meta($post->id, 'elit_fb', true);
+
+            $currentStats = unserialize($current);
+
+            if  ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares'] ||
+                $newStats['elit_fb_likes'] != $currentStats['elit_fb_likes'] ||
+                $newStats['elit_fb_comments'] != $currentStats['elit_fb_comments']) {
+
+                array_push(
+                    $report, 
+                    array('title' => get_the_title($post->id))
+                );
+
+                if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
+                    array_push(
+                        $report, 
+                        array(
+                            'new_share_count' => 
+                                (int) $newStats['elit_fb_shares'] - 
+                                    (int) $currentStats['elit_fb_shares']
+                        )
+                    );
+                } 
+        
+                if ($newStats['elit_fb_likes'] != $currentStats['elit_fb_likes']) {
+                    array_push(
+                        $report, 
+                        array(
+                            'new_like_count' => 
+                                (int) $newStats['elit_fb_likes'] - 
+                                    (int) $currentStats['elit_fb_likes']
+                        )
+                    );
+                } 
+
+                if ($newStats['elit_fb_comments'] != $currentStats['elit_fb_comments']) {
+                    array_push(
+                        $report, 
+                        array(
+                            'new_comment_count' => 
+                                (int) $newStats['elit_fb_comments'] - 
+                                    (int) $currentStats['elit_fb_comments']
+                        )
+                    );
+                }
+            }
     
-            update_post_meta($post->id, 'elit_fb', serialize($stats));
+            update_post_meta($post->id, 'elit_fb', serialize($newStats));
         }
+
+        wp_mail(
+            'psinco@osteopathic.org', 
+            'Elit Facebook Counts', 
+            implode('|', $report),
+            'Content-Type: text/plain'
+        );
+        
     }
 
 }
