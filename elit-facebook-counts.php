@@ -127,6 +127,7 @@ function elit_fb_process_posts() {
 
                 $reportItem = array();
                 $reportItem['title'] = get_the_title($post->id);
+                $reportItem['id'] = $post->id;
 
                 if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
                     $reportItem['new_share_count'] = 
@@ -140,7 +141,8 @@ function elit_fb_process_posts() {
                               (int) $currentStats['elit_fb_likes'];
                 } 
 
-                if ($newStats['elit_fb_comments'] != $currentStats['elit_fb_comments']) {
+                if ($newStats['elit_fb_comments'] != 
+                        $currentStats['elit_fb_comments']) {
                     $reportItem['new_comment_count'] = 
                         (int) $newStats['elit_fb_comments'] - 
                             (int) $currentStats['elit_fb_comments'];
@@ -155,6 +157,8 @@ function elit_fb_process_posts() {
 
         $emailBody = '';
         foreach ($report as $item) {
+          $newStatsArray = get_post_meta($item['id'], 'elit_fb', true);
+          $newStats = unserialize($newStatsArray);
           $emailBody .= '------------------------------------------' . PHP_EOL;
           $emailBody .= '                U P D A T E               ' . PHP_EOL;
           $emailBody .= '------------------------------------------' . PHP_EOL;
