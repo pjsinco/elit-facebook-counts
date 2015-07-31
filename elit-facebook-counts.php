@@ -125,7 +125,8 @@ function elit_fb_process_posts() {
                 $logger->addInfo("\t\tPushing item to report ...");
 
                 $reportItem = array();
-                $reportItem['title'] = get_the_title($post->id);
+                $reportItem['title'] = 
+                  wp_kses_decode_entities(get_the_title($post->id));
                 $reportItem['id'] = $post->id;
 
                 if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
