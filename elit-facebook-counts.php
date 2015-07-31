@@ -81,7 +81,7 @@ function elit_fb_activation() {
     elit_fb_process_posts();
 
     if (!wp_next_scheduled('elit_fb_cron_hook')) {
-        wp_schedule_event(time(), 'hourly', 'elit_fb_cron_hook');
+        wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
     }
 
 }
