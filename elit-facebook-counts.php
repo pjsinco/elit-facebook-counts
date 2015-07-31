@@ -190,14 +190,16 @@ function elit_fb_process_posts() {
           $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
         }
 
-        $mailed = wp_mail(
-            'psinco@osteopathic.org', 
-            'Facebook Activity', 
-            $emailBody, 
-            'Content-Type: text/plain'
-        );
+        if (!empty($report)) {
+            $mailed = wp_mail(
+                'psinco@osteopathic.org', 
+                'Facebook Activity', 
+                $emailBody, 
+                'Content-Type: text/plain'
+            );
+        }
 
-        $logger->addInfo('Mailed? ' . ($mailed ? 'Yes' : 'No'));
+        $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
         
     }
 
