@@ -120,9 +120,9 @@ function elit_fb_process_posts() {
 
             $currentStats = unserialize($current);
 
-            if  ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares'] ||
+            if  (!empty($current) && ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares'] ||
                 $newStats['elit_fb_likes'] != $currentStats['elit_fb_likes'] ||
-                $newStats['elit_fb_comments'] != $currentStats['elit_fb_comments']) {
+                $newStats['elit_fb_comments'] != $currentStats['elit_fb_comments'])) {
 
                 $logger->addInfo("\t\tPushing item to report ...");
 
@@ -174,22 +174,21 @@ function elit_fb_process_posts() {
           $emailBody .= $item['title'] . PHP_EOL;
           if (isset($item['new_like_count'])) {
               $emailBody .= 
-                "New likes:\t" . $item['new_like_count'] . PHP_EOL;
+                "New likes:    " . $item['new_like_count'] . PHP_EOL;
           }
-          $emailBody .= PHP_EOL;
           if (isset($item['new_share_count'])) {
               $emailBody .= 
-                "New shares:\t" . $item['new_share_count'] . PHP_EOL;
+                "New shares:   " . $item['new_share_count'] . PHP_EOL;
           }
           if (isset($item['new_comment_count'])) {
               $emailBody .= 
-                "New comments:\t" . $item['new_comment_count'] . PHP_EOL;
+                "New comments: " . $item['new_comment_count'] . PHP_EOL;
           }
           $emailBody .= PHP_EOL;
           $emailBody .= 'NEW TOTALS FOR POST' . PHP_EOL;
-          $emailBody .= "Likes:\t" . $newStats['elit_fb_likes'] . PHP_EOL;
-          $emailBody .= "Shares:\t" . $newStats['elit_fb_shares'] . PHP_EOL;
-          $emailBody .= "Comments:\t" . $newStats['elit_fb_comments'] . PHP_EOL;
+          $emailBody .= "Likes:    " . $newStats['elit_fb_likes'] . PHP_EOL;
+          $emailBody .= "Shares:   " . $newStats['elit_fb_shares'] . PHP_EOL;
+          $emailBody .= "Comments: " . $newStats['elit_fb_comments'] . PHP_EOL;
           $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
         }
 
