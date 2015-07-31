@@ -159,15 +159,15 @@ function elit_fb_process_posts() {
         $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
         $emailBody .= "* * * * * *      B E T A       * * * * * *" . PHP_EOL;
         $emailBody .= "* * * * *                        * * * * *" . PHP_EOL . PHP_EOL;
-        $emailBody = 'Activity since yesterday ...';
+        $emailBody .= 'Activity since yesterday ...' . PHP_EOL;
         $emailBody .= PHP_EOL;
 
         foreach ($report as $item) {
           $newStatsArray = get_post_meta($item['id'], 'elit_fb', true);
           $newStats = unserialize($newStatsArray);
-          $emailBody .= '------------------------------------------' . PHP_EOL;
-          $emailBody .= '                U P D A T E               ' . PHP_EOL;
-          $emailBody .= '------------------------------------------' . PHP_EOL;
+          $emailBody .= '---------------' . PHP_EOL;
+          $emailBody .= '  U P D A T E  ' . PHP_EOL;
+          $emailBody .= '---------------' . PHP_EOL;
           $emailBody .= PHP_EOL;
           $emailBody .= $item['title'] . PHP_EOL;
           if (isset($item['new_like_count'])) {
@@ -193,7 +193,7 @@ function elit_fb_process_posts() {
         if (!empty($report)) {
             $mailed = wp_mail(
                 'psinco@osteopathic.org', 
-                'Facebook Activity', 
+                "The DO's Facebook report: " . date('F j, Y'), 
                 $emailBody, 
                 'Content-Type: text/plain'
             );
