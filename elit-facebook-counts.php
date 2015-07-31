@@ -82,7 +82,8 @@ function elit_fb_activation() {
 
     if (!wp_next_scheduled('elit_fb_cron_hook')) {
       $logger->addInfo('elit_fb_cron_hook scheduled'); 
-        wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
+        //wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
+        wp_schedule_event(1438336800, 'hourly', 'elit_fb_cron_hook');
     }
 
 }
@@ -156,6 +157,13 @@ function elit_fb_process_posts() {
         }
 
         $emailBody = '';
+        $emailBody .= PHP_EOL;
+        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
+        $emailBody .= "* * * * * *      B E T A       * * * * * *" . PHP_EOL;
+        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL . PHP_EOL;
+        $emailBody = 'Activity since yesterday ...';
+        $emailBody .= PHP_EOL;
+
         foreach ($report as $item) {
           $newStatsArray = get_post_meta($item['id'], 'elit_fb', true);
           $newStats = unserialize($newStatsArray);
@@ -165,25 +173,29 @@ function elit_fb_process_posts() {
           $emailBody .= PHP_EOL;
           $emailBody .= $item['title'] . PHP_EOL;
           if (isset($item['new_like_count'])) {
-              $emailBody .= 'New likes: ' . $item['new_like_count'] . PHP_EOL;
-          }
-          if (isset($item['new_share_count'])) {
-              $emailBody .= 'New shares: ' . $item['new_share_count'] . PHP_EOL;
-          }
-          if (isset($item['new_comment_count'])) {
-              $emailBody .= 'New comments: ' . $item['new_comment_count'] . PHP_EOL;
+              $emailBody .= 
+                "New likes:\t" . $item['new_like_count'] . PHP_EOL;
           }
           $emailBody .= PHP_EOL;
-          $emailBody .= 'U P D A T E D   T O T A L S' . PHP_EOL;
-          $emailBody .= 'Likes: ' . $newStats['elit_fb_likes'] . PHP_EOL;
-          $emailBody .= 'Shares: ' . $newStats['elit_fb_shares'] . PHP_EOL;
-          $emailBody .= 'Comments: ' . $newStats['elit_fb_comments'] . PHP_EOL;
+          if (isset($item['new_share_count'])) {
+              $emailBody .= 
+                "New shares:\t" . $item['new_share_count'] . PHP_EOL;
+          }
+          if (isset($item['new_comment_count'])) {
+              $emailBody .= 
+                "New comments:\t" . $item['new_comment_count'] . PHP_EOL;
+          }
+          $emailBody .= PHP_EOL;
+          $emailBody .= 'NEW TOTALS FOR POST' . PHP_EOL;
+          $emailBody .= "Likes:\t" . $newStats['elit_fb_likes'] . PHP_EOL;
+          $emailBody .= "Shares:\t" . $newStats['elit_fb_shares'] . PHP_EOL;
+          $emailBody .= "Comments:\t" . $newStats['elit_fb_comments'] . PHP_EOL;
           $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
         }
 
         $mailed = wp_mail(
             'psinco@osteopathic.org', 
-            'Elit Facebook Counts', 
+            'Facebook Activity', 
             $emailBody, 
             'Content-Type: text/plain'
         );
