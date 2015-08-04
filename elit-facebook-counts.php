@@ -132,7 +132,6 @@ function elit_fb_process_posts() {
                 $reportItem['title'] = 
                   wp_kses_decode_entities(get_the_title($post->id));
                 add_filter('the_title', 'wptexturize');
-                $logger->addInfo('decoded title: ' . $reportItem['title']);
 
                 $reportItem['id'] = $post->id;
 
@@ -156,6 +155,7 @@ function elit_fb_process_posts() {
                 }
 
                 array_push($report, $reportItem);
+                $logger->addInfo('reportItem: ' . var_export($reportItem, true));
             }
 
     
