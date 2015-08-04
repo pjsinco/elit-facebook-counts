@@ -81,7 +81,7 @@ function elit_fb_activation() {
     elit_fb_process_posts();
 
     if (!wp_next_scheduled('elit_fb_cron_hook')) {
-        wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
+        wp_schedule_event(time(), 'hourly', 'elit_fb_cron_hook');
     }
 
 }
@@ -125,8 +125,15 @@ function elit_fb_process_posts() {
                 $logger->addInfo("\t\tPushing item to report ...");
 
                 $reportItem = array();
+
+                // remove wptexturize for a sec so we don't get any curly 
+                // quotes, etc.
+                remove_filter('the_title', 'wptexturize');
                 $reportItem['title'] = 
                   wp_kses_decode_entities(get_the_title($post->id));
+                add_filter('the_title', 'wptexturize');
+                $logger->addInfo('decoded title: ' . $reportItem['title']);
+
                 $reportItem['id'] = $post->id;
 
                 if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
@@ -195,9 +202,9 @@ function elit_fb_process_posts() {
             $mailed = wp_mail(
                 array( 
                     'psinco@osteopathic.org',
-                    'bjohnson@osteopathic.org',
+                    //'bjohnson@osteopathic.org',
                 ),
-                'psinco@osteopathic.org', 
+                //'psinco@osteopathic.org', 
                 "The DO's Facebook report: " . date('F j, Y'), 
                 $emailBody, 
                 'Content-Type: text/plain'
