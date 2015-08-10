@@ -17,7 +17,8 @@
                         <h3><span>Details</span></h3>
 
                         <div class="inside">
-                            <pre><?php print_r(_get_cron_array()); ?></pre>
+                            <pre><?php //print_r(_get_cron_array()); ?></pre>
+                            <pre><?php //elit_fb_make_csv(); ?></pre>
                         </div>
                         <!-- .inside -->
 

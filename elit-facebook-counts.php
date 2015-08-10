@@ -75,6 +75,34 @@ function elit_fb_counts_options_page() {
 
 }
 
+function elit_fb_make_csv() {
+
+  $id_list = elit_fb_get_posts();
+  
+  echo sprintf('%s,%s,%s,%s,%s,%s', 'link', 'shares', 'likes', 'comments', 'last_updated', 'id');
+
+  echo  PHP_EOL;
+  
+  // print each data row and increment count
+  foreach ($id_list as $id) {
+    $stats_raw = get_post_meta($id->id, 'elit_fb', true);
+    $stats = unserialize($stats_raw);
+    echo sprintf('%s,%s,%s,%s,%s,%s', 
+      get_permalink($id->id),
+      $stats['elit_fb_shares'],
+      $stats['elit_fb_likes'],
+      $stats['elit_fb_comments'],
+      '2015-08-10',
+      $id->id
+    ); 
+
+    echo  PHP_EOL;
+    
+  }
+
+
+}
+
 
 function elit_fb_activation() {
 
@@ -86,6 +114,7 @@ function elit_fb_activation() {
 
 }
 register_activation_hook(__FILE__, 'elit_fb_activation');
+
 
 
 function elit_fb_process_posts() {
@@ -202,9 +231,8 @@ function elit_fb_process_posts() {
             $mailed = wp_mail(
                 array( 
                     'psinco@osteopathic.org',
-                    //'bjohnson@osteopathic.org',
+                    'bjohnson@osteopathic.org',
                 ),
-                //'psinco@osteopathic.org', 
                 "The DO's Facebook report: " . date('F j, Y'), 
                 $emailBody, 
                 'Content-Type: text/plain'
