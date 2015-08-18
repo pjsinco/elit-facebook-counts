@@ -110,7 +110,7 @@ class Elit_Fb_Counts
         $this->elit_fb_process_posts();
     
         if (!wp_next_scheduled('elit_fb_cron_hook')) {
-            wp_schedule_event(time(), 'hourly', 'elit_fb_cron_hook');
+            wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
         }
     
     }
@@ -254,7 +254,7 @@ class Elit_Fb_Counts
                 $mailed = wp_mail(
                     array( 
                         'psinco@osteopathic.org',
-                        //'bjohnson@osteopathic.org',
+                        'bjohnson@osteopathic.org',
                     ),
                     "The DO's Facebook report: " . date('F j, Y'), 
                     $emailBody, 
