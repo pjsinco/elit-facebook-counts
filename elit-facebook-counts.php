@@ -312,10 +312,10 @@ class Elit_List_Table extends WP_List_Table
                 return $item[$column_name];
             case 'id':
                 return $item[$column_name];
-            case 'post_date':
-                return $item[$column_name];
-            case 'elit_fb_likes':
-                return $item[$column_name];
+//            case 'post_date':
+//                return $item['post_date'];
+//            case 'elit_fb_likes':
+//                return (int) $item['elit_fb_likes'];
             case 'elit_fb_shares':
                 return $item[$column_name];
             case 'elit_fb_comments':
@@ -325,11 +325,14 @@ class Elit_List_Table extends WP_List_Table
         }
     }
 
-    function columm_post($item) {
-        // Build row actions
-        return sprintf( '%1$s', $item['post']);
+    function column_elit_fb_likes($item) {
+      return $item['elit_fb_likes'];
     }
 
+    function column_post_date($item) {
+      return date('M. j, Y', strtotime($item['post_date']));
+    }
+    
     function get_columns() {
 
         $columns = array(
@@ -360,15 +363,16 @@ class Elit_List_Table extends WP_List_Table
         $per_page = 20;
 
         $columns = $this->get_columns();
-        $hidden = array();
+        $hidden = array('id');
         $sortable = $this->get_sortable_columns();
 
         $this->_column_headers = array($columns, $hidden, $sortable);
 
         //$data = $this->example_data;
         // DB query goes here
+        //SELECT p.ID, p.post_title, DATE_FORMAT(p.post_date, '%b %e, %Y') as post_date, pm.meta_value
         $q = "
-            SELECT p.ID, p.post_title, DATE_FORMAT(p.post_date, '%b %e, %Y') as post_date, pm.meta_value
+            SELECT p.ID, p.post_title, p.post_date, pm.meta_value
             FROM {$wpdb->prefix}posts p INNER JOIN {$wpdb->prefix}postmeta pm
                 ON p.id = pm.post_id
             WHERE
@@ -387,9 +391,9 @@ class Elit_List_Table extends WP_List_Table
                 'ID' => $results[$i]->ID,
                 'post' => $results[$i]->post_title,
                 'post_date' => $results[$i]->post_date,
-                'elit_fb_likes' => (int) $stats['elit_fb_likes'],
-                'elit_fb_shares' => (int) $stats['elit_fb_shares'],
-                'elit_fb_comments' => (int) $stats['elit_fb_comments'],
+                'elit_fb_likes' =>  (int) $stats['elit_fb_likes'],
+                'elit_fb_shares' =>  (int) $stats['elit_fb_shares'],
+                'elit_fb_comments' =>  (int) $stats['elit_fb_comments'],
             ));
         }
 
@@ -398,9 +402,14 @@ class Elit_List_Table extends WP_List_Table
             $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'post_date'; 
             //If no order, default to desc
             $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'desc'; 
-            $result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
+            if (gettype($a[$orderby]) == 'string' && gettype($b[$orderby]) == 'string') {
+                $result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
+            } else {
+                $result = $a[$orderby] - $b[$orderby]; //Determine sort order
+            }
             return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
         }
+
         usort($data, 'usort_reorder');
 
 
