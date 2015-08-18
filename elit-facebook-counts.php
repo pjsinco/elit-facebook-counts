@@ -56,6 +56,25 @@ class Elit_Fb_Counts
             'elit_fb_cron_hook', 
             array($this, 'elit_fb_process_posts')
         );
+
+        add_action('admin_head', array($this, 'elit_fb_admin_header'));
+    }
+
+    public function elit_fb_admin_header() {
+
+        $page = (isset($_GET['page'])) ? esc_attr($_GET['page']) : false;
+
+        if (!$page) {
+            return;
+        }
+
+        echo '<style type="text/css">';
+        echo '.wp-list-table .column-post { width: 40%; }';
+        echo '.wp-list-table .column-post_date { width: 12%; }';
+        echo '.wp-list-table .column-elit_fb_likes { width: 10%; }';
+        echo '.wp-list-table .column-elit_fb_shares { width: 10%; }';
+        echo '.wp-list-table .column-elit_fb_comments { width: 10%; }';
+
     }
 
     /**
@@ -309,7 +328,7 @@ class Elit_List_Table extends WP_List_Table
     function column_default($item, $column_name) {
         switch($column_name) {
             case 'post':
-                return $item[$column_name];
+                return '<a href="' . home_url('?p=') . $item['ID'] . '">' . $item[$column_name] . '</a>';
             case 'id':
                 return $item[$column_name];
 //            case 'post_date':
