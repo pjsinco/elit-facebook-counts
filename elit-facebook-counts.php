@@ -106,8 +106,8 @@ class Elit_Fb_Counts
     public function elit_fb_counts_menu() {
     
         add_options_page(
-            'Facebook Counts',
-            'Facebook Counts',
+            'Facebook Counts (Beta)',
+            'Facebook Counts (Beta)',
             'manage_options',
             'facebook-counts',
             array($this, 'elit_fb_counts_options_page')
