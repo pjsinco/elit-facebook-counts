@@ -27,266 +27,187 @@ use Monolog\Handler\StreamHandler;
 define('FB_URL', "http://api.facebook.com/restserver.php?method=links." . 
     "getStats&urls=");
 
-if (is_admin()) {
-    new Elit_Fb_Counts();
-}
 
-class Elit_Fb_Counts
+
+/**
+ * Get all id, title and date of all published posts
+ *
+ * @return array of post IDs
+ * @author PJ
+ */
+function elit_fb_get_posts()
 {
-
-    /**
-     * Constructor will create the menu item.
-     *
-     * @return void
-     * @author PJ
-     */
-    public function __construct()
-    {
-        add_action(
-            'admin_menu' , 
-            array($this, 'elit_fb_counts_menu')
-        );
-
-        register_activation_hook(
-            __FILE__, 
-            array($this, 'elit_fb_activation')
-        );
-
-        add_action(
-            'elit_fb_cron_hook', 
-            array($this, 'elit_fb_process_posts')
-        );
-
-        add_action('admin_head', array($this, 'elit_fb_admin_header'));
-    }
-
-    public function elit_fb_admin_header() {
-
-        $page = (isset($_GET['page'])) ? esc_attr($_GET['page']) : false;
-
-        if (!$page) {
-            return;
-        }
-
-        echo '<style type="text/css">';
-        echo '.wp-list-table .column-post { width: 40%; }';
-        echo '.wp-list-table .column-post_date { width: 12%; }';
-        echo '.wp-list-table .column-elit_fb_likes { width: 10%; }';
-        echo '.wp-list-table .column-elit_fb_shares { width: 10%; }';
-        echo '.wp-list-table .column-elit_fb_comments { width: 10%; }';
-
-    }
-
-    /**
-     * Get all id, title and date of all published posts
-     *
-     * @return array of post IDs
-     * @author PJ
-     */
-    public function elit_fb_get_posts()
-    {
-        global $wpdb;
-        //$table = $wpdb->prefix . '_posts';
-        $q = "
-            SELECT id, post_name, post_date
-            FROM {$wpdb->prefix}posts
-            WHERE post_status = 'publish'
-              AND post_type = 'post'
-            ORDER BY id
-        ";
-        
-        $results = $wpdb->get_results($q);
+    global $wpdb;
+    //$table = $wpdb->prefix . '_posts';
+    $q = "
+        SELECT id, post_name, post_date
+        FROM {$wpdb->prefix}posts
+        WHERE post_status = 'publish'
+          AND post_type = 'post'
+        ORDER BY id
+    ";
     
-        return $results;
-    }
-    /**
-     * Add a menu page for our plugin to the admin menu.
-     *
-     */
-    public function elit_fb_counts_menu() {
-    
-        add_options_page(
-            'Facebook Counts (Beta)',
-            'Facebook Counts (Beta)',
-            'manage_options',
-            'facebook-counts',
-            array($this, 'elit_fb_counts_options_page')
-        );
-    
-    }
-
-    public function elit_fb_counts_options_page() {
-    
-        if (!current_user_can('manage_options')) {
-            wp_die('You do not have sufficient permission to access this page.');
-        }
-    
-        require('includes/options-page-wrapper.php');
-    }
-
-    public function elit_fb_activation() {
-    
-        $this->elit_fb_process_posts();
-    
-        if (!wp_next_scheduled('elit_fb_cron_hook')) {
-            wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
-        }
-    
-    }
-
-    public function elit_fb_make_csv() {
-    
-      $id_list = $this->elit_fb_get_posts();
-      
-      echo sprintf('%s,%s,%s,%s,%s,%s', 'link', 'shares', 'likes', 'comments', 'last_updated', 'id');
-    
-      echo  PHP_EOL;
-      
-      // print each data row and increment count
-      foreach ($id_list as $id) {
-        $stats_raw = get_post_meta($id->id, 'elit_fb', true);
-        $stats = unserialize($stats_raw);
-        echo sprintf('%s,%s,%s,%s,%s,%s', 
-          get_permalink($id->id),
-          $stats['elit_fb_shares'],
-          $stats['elit_fb_likes'],
-          $stats['elit_fb_comments'],
-          '2015-08-10',
-          $id->id
-        ); 
-    
-        echo  PHP_EOL;
-        
-      }
-    }
-    
-    public function elit_fb_process_posts() {
-         $logger = new Logger('elit_fb_logger');
-         $logger->pushHandler(
-             new StreamHandler(plugin_dir_path(__FILE__) . 'log.txt'),
-             Logger::DEBUG
-         );
-    
-        $logger->addInfo('Starting elit_fb_process_posts: ' . time());
-    
-        $posts = $this->elit_fb_get_posts();
-        $logger->addInfo("\tHave posts? " . !empty($posts));
-    
-        $report = array();
-    
-        if ($posts) {
-            foreach ($posts as $post) {
-                $logger->addInfo("\t\tProcessing $post->id");
-                $newStats = array();
-                $url = FB_URL . urlencode(get_permalink($post->id));
-                $info = wp_remote_get($url);
-                $xml = simplexml_load_string($info['body']);
-                $newStats['elit_fb_shares'] = (string) $xml->link_stat->share_count;
-                $newStats['elit_fb_likes'] = (string) $xml->link_stat->like_count;
-                $newStats['elit_fb_comments'] = (string) $xml->link_stat->comment_count;
-    
-                $current = get_post_meta($post->id, 'elit_fb', true);
-    
-                $currentStats = unserialize($current);
-    
-                if  (!empty($current) && ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares'] ||
-                    $newStats['elit_fb_likes'] != $currentStats['elit_fb_likes'] ||
-                    $newStats['elit_fb_comments'] != $currentStats['elit_fb_comments'])) {
-    
-                    $logger->addInfo("\t\tPushing item to report ...");
-    
-                    $reportItem = array();
-    
-                    // remove wptexturize for a sec so we don't get any curly 
-                    // quotes, etc.
-                    remove_filter('the_title', 'wptexturize');
-                    $reportItem['title'] = 
-                      wp_kses_decode_entities(get_the_title($post->id));
-                    add_filter('the_title', 'wptexturize');
-    
-                    $reportItem['id'] = $post->id;
-    
-                    if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
-                        $reportItem['new_share_count'] = 
-                            (int) $newStats['elit_fb_shares'] - 
-                                (int) $currentStats['elit_fb_shares'];
-                    } 
-            
-                    if ($newStats['elit_fb_likes'] != $currentStats['elit_fb_likes']) {
-                        $reportItem['new_like_count'] =
-                            (int) $newStats['elit_fb_likes'] - 
-                                  (int) $currentStats['elit_fb_likes'];
-                    } 
-    
-                    if ($newStats['elit_fb_comments'] != 
-                            $currentStats['elit_fb_comments']) {
-                        $reportItem['new_comment_count'] = 
-                            (int) $newStats['elit_fb_comments'] - 
-                                (int) $currentStats['elit_fb_comments'];
-                    }
-    
-                    array_push($report, $reportItem);
-                    $logger->addInfo('reportItem: ' . var_export($reportItem, true));
-                }
-    
-        
-                update_post_meta($post->id, 'elit_fb', serialize($newStats));
-            }
-    
-            $emailBody = '';
-            $emailBody .= PHP_EOL;
-            $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
-            $emailBody .= "* * * * * *      B E T A       * * * * * *" . PHP_EOL;
-            $emailBody .= "* * * * *                        * * * * *" . PHP_EOL . PHP_EOL;
-            $emailBody .= 'Activity since yesterday ...' . PHP_EOL;
-            $emailBody .= PHP_EOL;
-    
-            foreach ($report as $item) {
-              $newStatsArray = get_post_meta($item['id'], 'elit_fb', true);
-              $newStats = unserialize($newStatsArray);
-              $emailBody .= '---------------' . PHP_EOL;
-              $emailBody .= '  U P D A T E  ' . PHP_EOL;
-              $emailBody .= '---------------' . PHP_EOL;
-              $emailBody .= PHP_EOL;
-              $emailBody .= $item['title'] . PHP_EOL;
-              if (isset($item['new_like_count'])) {
-                  $emailBody .= 
-                    "New likes:    " . $item['new_like_count'] . PHP_EOL;
-              }
-              if (isset($item['new_share_count'])) {
-                  $emailBody .= 
-                    "New shares:   " . $item['new_share_count'] . PHP_EOL;
-              }
-              if (isset($item['new_comment_count'])) {
-                  $emailBody .= 
-                    "New comments: " . $item['new_comment_count'] . PHP_EOL;
-              }
-              $emailBody .= PHP_EOL;
-              $emailBody .= 'NEW TOTALS FOR POST' . PHP_EOL;
-              $emailBody .= "Likes:    " . $newStats['elit_fb_likes'] . PHP_EOL;
-              $emailBody .= "Shares:   " . $newStats['elit_fb_shares'] . PHP_EOL;
-              $emailBody .= "Comments: " . $newStats['elit_fb_comments'] . PHP_EOL;
-              $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
-            }
-    
-            if (!empty($report)) {
-                $mailed = wp_mail(
-                    array( 
-                        'psinco@osteopathic.org',
-                        'bjohnson@osteopathic.org',
-                    ),
-                    "The DO's Facebook report: " . date('F j, Y'), 
-                    $emailBody, 
-                    'Content-Type: text/plain'
-                );
-            }
-    
-            $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
-            
-        }
-    }
-
+    $results = $wpdb->get_results($q);
+    return $results;
 }
+
+/**
+ * Add a menu page for our plugin to the admin menu.
+ *
+ */
+function elit_fb_counts_menu() {
+    add_options_page(
+        'Facebook Counts',
+        'Facebook Counts',
+        'manage_options',
+        'facebook-counts',
+        'elit_fb_counts_options_page'
+    );
+}
+
+add_action('admin_menu' , 'elit_fb_counts_menu');
+function elit_fb_counts_options_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('You do not have sufficient permission to access this page.');
+    }
+    require('includes/options-page-wrapper.php');
+}
+function elit_fb_make_csv() {
+  $id_list = elit_fb_get_posts();
+  
+  echo sprintf('%s,%s,%s,%s,%s,%s', 'link', 'shares', 'likes', 'comments', 'last_updated', 'id');
+  echo  PHP_EOL;
+  
+  // print each data row and increment count
+  foreach ($id_list as $id) {
+    $stats_raw = get_post_meta($id->id, 'elit_fb', true);
+    $stats = unserialize($stats_raw);
+    echo sprintf('%s,%s,%s,%s,%s,%s', 
+      get_permalink($id->id),
+      $stats['elit_fb_shares'],
+      $stats['elit_fb_likes'],
+      $stats['elit_fb_comments'],
+      '2015-08-10',
+      $id->id
+    ); 
+    echo  PHP_EOL;
+    
+  }
+}
+function elit_fb_activation() {
+    elit_fb_process_posts();
+    if (!wp_next_scheduled('elit_fb_cron_hook')) {
+        wp_schedule_event(time(), 'daily', 'elit_fb_cron_hook');
+    }
+}
+register_activation_hook(__FILE__, 'elit_fb_activation');
+function elit_fb_process_posts() {
+     $logger = new Logger('elit_fb_logger');
+     $logger->pushHandler(
+         new StreamHandler(plugin_dir_path(__FILE__) . 'log.txt'),
+         Logger::DEBUG
+     );
+    $logger->addInfo('Starting elit_fb_process_posts: ' . time());
+    $posts = elit_fb_get_posts();
+    $logger->addInfo("\tHave posts? " . !empty($posts));
+    $report = array();
+    if ($posts) {
+        foreach ($posts as $post) {
+            $logger->addInfo("\t\tProcessing $post->id");
+            $newStats = array();
+            $url = FB_URL . urlencode(get_permalink($post->id));
+            $info = wp_remote_get($url);
+            $xml = simplexml_load_string($info['body']);
+            $newStats['elit_fb_shares'] = (string) $xml->link_stat->share_count;
+            $newStats['elit_fb_likes'] = (string) $xml->link_stat->like_count;
+            $newStats['elit_fb_comments'] = (string) $xml->link_stat->comment_count;
+            $current = get_post_meta($post->id, 'elit_fb', true);
+            $currentStats = unserialize($current);
+            if  (!empty($current) && ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares'] ||
+                $newStats['elit_fb_likes'] != $currentStats['elit_fb_likes'] ||
+                $newStats['elit_fb_comments'] != $currentStats['elit_fb_comments'])) {
+                $logger->addInfo("\t\tPushing item to report ...");
+                $reportItem = array();
+                // remove wptexturize for a sec so we don't get any curly 
+                // quotes, etc.
+                remove_filter('the_title', 'wptexturize');
+                $reportItem['title'] = 
+                  wp_kses_decode_entities(get_the_title($post->id));
+                add_filter('the_title', 'wptexturize');
+                $reportItem['id'] = $post->id;
+                if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
+                    $reportItem['new_share_count'] = 
+                        (int) $newStats['elit_fb_shares'] - 
+                            (int) $currentStats['elit_fb_shares'];
+                } 
+        
+                if ($newStats['elit_fb_likes'] != $currentStats['elit_fb_likes']) {
+                    $reportItem['new_like_count'] =
+                        (int) $newStats['elit_fb_likes'] - 
+                              (int) $currentStats['elit_fb_likes'];
+                } 
+                if ($newStats['elit_fb_comments'] != 
+                        $currentStats['elit_fb_comments']) {
+                    $reportItem['new_comment_count'] = 
+                        (int) $newStats['elit_fb_comments'] - 
+                            (int) $currentStats['elit_fb_comments'];
+                }
+                array_push($report, $reportItem);
+                $logger->addInfo('reportItem: ' . var_export($reportItem, true));
+            }
+    
+            update_post_meta($post->id, 'elit_fb', serialize($newStats));
+        }
+        $emailBody = '';
+        $emailBody .= PHP_EOL;
+        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
+        $emailBody .= "* * * * * *      B E T A       * * * * * *" . PHP_EOL;
+        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL . PHP_EOL;
+        $emailBody .= 'Activity since yesterday ...' . PHP_EOL;
+        $emailBody .= PHP_EOL;
+        foreach ($report as $item) {
+          $newStatsArray = get_post_meta($item['id'], 'elit_fb', true);
+          $newStats = unserialize($newStatsArray);
+          $emailBody .= '---------------' . PHP_EOL;
+          $emailBody .= '  U P D A T E  ' . PHP_EOL;
+          $emailBody .= '---------------' . PHP_EOL;
+          $emailBody .= PHP_EOL;
+          $emailBody .= $item['title'] . PHP_EOL;
+          if (isset($item['new_like_count'])) {
+              $emailBody .= 
+                "New likes:    " . $item['new_like_count'] . PHP_EOL;
+          }
+          if (isset($item['new_share_count'])) {
+              $emailBody .= 
+                "New shares:   " . $item['new_share_count'] . PHP_EOL;
+          }
+          if (isset($item['new_comment_count'])) {
+              $emailBody .= 
+                "New comments: " . $item['new_comment_count'] . PHP_EOL;
+          }
+          $emailBody .= PHP_EOL;
+          $emailBody .= 'NEW TOTALS FOR POST' . PHP_EOL;
+          $emailBody .= "Likes:    " . $newStats['elit_fb_likes'] . PHP_EOL;
+          $emailBody .= "Shares:   " . $newStats['elit_fb_shares'] . PHP_EOL;
+          $emailBody .= "Comments: " . $newStats['elit_fb_comments'] . PHP_EOL;
+          $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
+        }
+        if (!empty($report)) {
+            $mailed = wp_mail(
+                array( 
+                    'psinco@osteopathic.org',
+                    'bjohnson@osteopathic.org',
+                ),
+                "The DO's Facebook report: " . date('F j, Y'), 
+                $emailBody, 
+                'Content-Type: text/plain'
+            );
+        }
+        $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
+        
+    }
+}
+add_action('elit_fb_cron_hook' , 'elit_fb_process_posts');
 
 class Elit_List_Table extends WP_List_Table
 {
@@ -449,8 +370,3 @@ class Elit_List_Table extends WP_List_Table
         );
     }
 }
-
-
-
-
-
