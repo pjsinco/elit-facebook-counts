@@ -56,17 +56,32 @@ function elit_fb_get_posts()
  *
  */
 function elit_fb_counts_menu() {
-    add_options_page(
+    add_management_page(
         'Facebook Counts',
         'Facebook Counts',
         'manage_options',
         'facebook-counts',
-        'elit_fb_counts_options_page'
+        'elit_fb_counts_management_page'
     );
 }
-
 add_action('admin_menu' , 'elit_fb_counts_menu');
-function elit_fb_counts_options_page() {
+
+function elit_fb_admin_header() {
+    $page = (isset($_GET['page'])) ? esc_attr($_GET['page']) : false;
+    if (!$page) {
+        return;
+    }
+    echo '<style type="text/css">';
+    echo '.wp-list-table .column-post { width: 40%; }';
+    echo '.wp-list-table .column-post_date { width: 12%; }';
+    echo '.wp-list-table .column-elit_fb_likes { width: 10%; }';
+    echo '.wp-list-table .column-elit_fb_shares { width: 10%; }';
+    echo '.wp-list-table .column-elit_fb_comments { width: 10%; }';
+}
+add_action('admin_head', 'elit_fb_admin_header');
+
+
+function elit_fb_counts_management_page() {
     if (!current_user_can('manage_options')) {
         wp_die('You do not have sufficient permission to access this page.');
     }
