@@ -175,9 +175,9 @@ function elit_fb_process_posts() {
         }
         $emailBody = '';
         $emailBody .= PHP_EOL;
-        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
-        $emailBody .= "* * * * * *      B E T A       * * * * * *" . PHP_EOL;
-        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL . PHP_EOL;
+//        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
+//        $emailBody .= "* * * * * *      B E T A       * * * * * *" . PHP_EOL;
+//        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL . PHP_EOL;
         $emailBody .= 'Activity since yesterday ...' . PHP_EOL;
         $emailBody .= PHP_EOL;
         foreach ($report as $item) {
