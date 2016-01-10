@@ -209,10 +209,11 @@ function elit_fb_process_posts() {
         }
 
         if (!empty($report)) {
-            include plugin_dir_path(__FILE__) . 
-                'includes/test-email.php';
+            $html = file_get_contents(
+                plugin_dir_path(__FILE__) .  'includes/test-email-2.php'
+            );
             //$mailed = elit_email_report($emailBody);
-            $mailed = elit_email_report($testEmail);
+            $mailed = elit_email_report($html);
         }
 
         $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
