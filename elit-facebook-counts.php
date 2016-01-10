@@ -207,22 +207,43 @@ function elit_fb_process_posts() {
           $emailBody .= "Comments: " . $newStats['elit_fb_comments'] . PHP_EOL;
           $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
         }
+
         if (!empty($report)) {
-            $mailed = wp_mail(
-                array( 
-                    'psinco@osteopathic.org',
-                    'bjohnson@osteopathic.org',
-                ),
-                "The DO's Facebook report: " . date('F j, Y'), 
-                $emailBody, 
-                'Content-Type: text/plain'
-            );
+            include plugin_dir_path(__FILE__) . 
+                'includes/test-email.php';
+            //$mailed = elit_email_report($emailBody);
+            $mailed = elit_email_report($testEmail);
         }
+
         $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
         
     }
 }
 add_action('elit_fb_cron_hook' , 'elit_fb_process_posts');
+
+function elit_set_html_content_type()
+{
+    return 'text/html';
+
+}
+
+function elit_email_report($body)
+{
+    add_filter('wp_mail_content_type', 'elit_set_html_content_type');
+
+    $mailed = wp_mail(
+        array( 
+            'psinco@osteopathic.org',
+            //'bjohnson@osteopathic.org',
+        ),
+        "The DO's Facebook report: " . date('F j, Y'), 
+        $body
+        //'Content-Type: text/plain'
+    );
+
+    remove_filter('wp_mail_content_type', 'elit_set_html_content_type');
+
+}
 
 class Elit_List_Table extends WP_List_Table
 {
