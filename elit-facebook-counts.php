@@ -208,13 +208,13 @@ function elit_fb_process_posts() {
           $emailBody .= PHP_EOL . PHP_EOL . PHP_EOL;
         }
 
-        if (!empty($report)) {
+        //if (!empty($report)) {
             $html = file_get_contents(
                 plugin_dir_path(__FILE__) .  'includes/test-email-2.php'
             );
             //$mailed = elit_email_report($emailBody);
             $mailed = elit_email_report($html);
-        }
+        //}
 
         $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
         
