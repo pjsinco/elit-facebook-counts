@@ -21,20 +21,23 @@ require_once( 'vendor/autoload.php' );
  * Send an HTML email
  *
  */
-function elit_format_html_email($report_items = array())
+function elit_format_html_email($report_items = array(), $logger)
 {
+$logger->addInfo('inside elit_format_html_email');
 
   $date = date('F j, Y');
 
-  $template = elit_get_email_templater();
+  $template = elit_get_email_templater($logger);
+$logger->addInfo('.. after elit_get_email_templater');
 
   $email = $template->render(
-    plugin_dir_path(__FILE__) . 'includes/email.html',
+    'email.html',
     array( 
       'report' => $report_items, 
       'date' => $date,
     )
   );
+$logger->addInfo('.. after template render');
 
   return $email;
 }
@@ -43,16 +46,21 @@ function elit_format_html_email($report_items = array())
  * Set up Twig templates
  *
  */
-function elit_get_email_templater()
+function elit_get_email_templater($logger)
 {
+$logger->addInfo('inside elit_get_email_templater');
 
   require_once( plugin_dir_path(__FILE__) . 'vendor/twig/twig/lib/Twig/Autoloader.php');
+$logger->addInfo('... after require_once');
 
   Twig_Autoloader::register();
+$logger->addInfo('... after register');
 
   $loader = new Twig_Loader_Filesystem(plugin_dir_path(__FILE__) . 'includes');
+$logger->addInfo('... after Twig_Loader_Filesystem');
 
   $twig = new Twig_Environment($loader);
+$logger->addInfo('... after Twig_Environment');
 
   return $twig;
 
@@ -158,6 +166,7 @@ function elit_fb_activation() {
     }
 }
 register_activation_hook(__FILE__, 'elit_fb_activation');
+
 function elit_fb_process_posts() {
      $logger = new Logger('elit_fb_logger');
      $logger->pushHandler(
@@ -216,6 +225,7 @@ function elit_fb_process_posts() {
             update_post_meta($post->id, 'elit_fb', serialize($newStats));
         }
 
+        $logger->addInfo("\t\tProcessing $post->id");
         /**
          * Add new totals to each report item
          *
@@ -226,8 +236,11 @@ function elit_fb_process_posts() {
           $report[$i]['new_stats'] = $newStats;
         }
         
-        $email = elit_format_html_email($report);
+        $logger->addInfo('Report to send: ' . var_export($report, true));
 
+        $email = elit_format_html_email($report, $logger);
+
+        $logger->addInfo('Email to send: ' . $email);
 
         $emailBody = '';
         $emailBody .= PHP_EOL;
