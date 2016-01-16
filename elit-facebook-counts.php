@@ -308,6 +308,9 @@ function elit_email_report($body)
     );
 
     remove_filter('wp_mail_content_type', 'elit_set_html_content_type');
+    
+    return $mailed;
+
 }
 
 class Elit_List_Table extends WP_List_Table
