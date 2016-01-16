@@ -192,6 +192,7 @@ function elit_fb_process_posts() {
                   wp_kses_decode_entities(get_the_title($post->id));
                 add_filter('the_title', 'wptexturize');
                 $reportItem['id'] = $post->id;
+                $reportItem['href'] = 'http://thedo.osteopathic.org/?p=' . $post->id;
                 if ($newStats['elit_fb_shares'] != $currentStats['elit_fb_shares']) {
                     $reportItem['new_share_count'] = 
                         (int) $newStats['elit_fb_shares'] - 
