@@ -1,3 +1,6 @@
 /vendor/
 log.txt
 misc/
+*.swp
+*.swo
+*.swm
