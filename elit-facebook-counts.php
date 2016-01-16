@@ -16,28 +16,26 @@ if (!defined('WPINC')) {
 }
 
 require_once( 'vendor/autoload.php' );
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Carbon\Carbon;
 
 /**
  * Send an HTML email
  *
  */
-function elit_format_html_email($report_items = array(), $logger)
+function elit_format_html_email($report_items = array())
 {
-$logger->addInfo('inside elit_format_html_email');
-
-  $date = date('F j, Y');
 
   $template = elit_get_email_templater($logger);
-$logger->addInfo('.. after elit_get_email_templater');
 
   $email = $template->render(
     'email.html',
     array( 
       'report' => $report_items, 
-      'date' => $date,
+      'date' => elit_report_date(),
     )
   );
-$logger->addInfo('.. after template render');
 
   return $email;
 }
@@ -46,21 +44,16 @@ $logger->addInfo('.. after template render');
  * Set up Twig templates
  *
  */
-function elit_get_email_templater($logger)
+function elit_get_email_templater()
 {
-$logger->addInfo('inside elit_get_email_templater');
 
   require_once( plugin_dir_path(__FILE__) . 'vendor/twig/twig/lib/Twig/Autoloader.php');
-$logger->addInfo('... after require_once');
 
   Twig_Autoloader::register();
-$logger->addInfo('... after register');
 
   $loader = new Twig_Loader_Filesystem(plugin_dir_path(__FILE__) . 'includes');
-$logger->addInfo('... after Twig_Loader_Filesystem');
 
   $twig = new Twig_Environment($loader);
-$logger->addInfo('... after Twig_Environment');
 
   return $twig;
 
@@ -71,8 +64,6 @@ if(!class_exists('WP_List_Table')){
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 define('FB_URL', "http://api.facebook.com/restserver.php?method=links." . 
     "getStats&urls=");
@@ -297,6 +288,11 @@ function elit_set_html_content_type()
     return 'text/html';
 }
 
+function elit_report_date()
+{
+    return Carbon::yesterday()->format('F j, Y');
+}
+
 function elit_email_report($body)
 {
     add_filter('wp_mail_content_type', 'elit_set_html_content_type');
@@ -306,7 +302,7 @@ function elit_email_report($body)
             'psinco@osteopathic.org',
             //'bjohnson@osteopathic.org',
         ),
-        "The DO: Facebookkeeping for" . date('F j, Y'), 
+        "The DO: Facebookkeeping for " . elit_report_date(), 
         $body
         //'Content-Type: text/plain'
     );

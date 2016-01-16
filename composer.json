@@ -9,6 +9,7 @@
     ],
     "require": {
         "monolog/monolog": "~1.13",
-        "twig/twig": "^1.23"
+        "twig/twig": "^1.23",
+        "nesbot/carbon": "^1.21"
      }
 }
