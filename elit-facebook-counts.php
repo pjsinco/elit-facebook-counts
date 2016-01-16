@@ -27,7 +27,7 @@ use Carbon\Carbon;
 function elit_format_html_email($report_items = array())
 {
 
-  $template = elit_get_email_templater($logger);
+  $template = elit_get_email_templater();
 
   $email = $template->render(
     'email.html',
@@ -229,7 +229,7 @@ function elit_fb_process_posts() {
         
         $logger->addInfo('Report to send: ' . var_export($report, true));
 
-        $email = elit_format_html_email($report, $logger);
+        $email = elit_format_html_email($report);
 
         $logger->addInfo('Email to send: ' . $email);
 
