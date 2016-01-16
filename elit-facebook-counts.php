@@ -1,7 +1,7 @@
 <?php 
 
 /*
-Plugin Name: Elit Facebook Counts (beta)
+Plugin Name: Elit Facebookkeeping
 Plugin URI:  https://github.com/pjsinco/elit-facebook-counts
 Description: Get counts of Facebook likes, shares and comments for each post.
 Version:     0.0.3
@@ -98,8 +98,8 @@ function elit_fb_get_posts()
  */
 function elit_fb_counts_menu() {
     add_management_page(
-        'Facebook Counts',
-        'Facebook Counts',
+        'Facebookkeeping',
+        'Facebookkeeping',
         'manage_options',
         'facebook-counts',
         'elit_fb_counts_management_page'

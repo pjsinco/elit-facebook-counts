@@ -5,7 +5,7 @@
 
     <div class="wrap">
         <div id="icon-users" class="icon32"></div>
-        <h2>Facebook counts</h2>
+        <h2>Facebookkeeping</h2>
         <?php $list_table->display(); ?>
     </div>
     
