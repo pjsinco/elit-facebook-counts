@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+  <head>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Facebookkeeping</title>
+  </head>
+  <body bgcolor="#f6f6f6" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; -webkit-font-smoothing: antialiased; height: 100%; -webkit-text-size-adjust: none; width: 100% !important; color: #444; margin: 0; padding: 0;">
+    <!-- body -->
+    <table class="body-wrap" bgcolor="#f6f6f6" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; border-top-width: 7px; border-top-color: #ef3f23; border-top-style: solid; margin: 0; padding: 20px;">
+      <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+          <div class="header" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; max-width: 540px; margin: 0 auto; padding: 0;">
+            <table style="width: 100%; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 10px 0 -10px; padding: 0;">
+              <tbody style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                  <td class="header__logo" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 120px; text-align: left; vertical-align: bottom; margin: 0; padding: 0;" align="left" valign="bottom">
+                    <img src="http://thedo.osteopathic.org/wp-content/uploads/2016/01/the-do-logo-240.png" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; max-width: 480px; width: 100%; margin: 0 0 15px; padding: 0;" alt="The DO logo">
+                  </td>
+                  <td class="header__title" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; text-align: right; margin: 0 0 5px; padding: 0;" align="right">
+                    <img style="width: 17px; display: inline; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; max-width: 480px; margin: 0; padding: 0;" src="http://thedo.osteopathic.org/wp-content/uploads/2016/01/calculator-34.png" alt="calculator">
+                    <h3 style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 18px; line-height: 19px; float: right; font-weight: 400; color: #ef3f23; margin: 0 0 10px 8px; padding: 0;"> Facebookkeeping</h3>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+      <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+        <td class="container" bgcolor="#FFFFFF" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; border-radius: 3px; clear: both !important; display: block !important; max-width: 480px !important; margin: 0 auto; padding: 20px 30px; border: 1px solid #f0f0f0;">
+        <div class="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; display: block; max-width: 480px; margin: 0 auto; padding: 0;">
+          <table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0; padding: 0;">
+            <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+              <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                <h2 class="email__title" style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 14px; line-height: 1.2em; border-bottom-color: #d0d0d0; border-bottom-width: 1px; border-bottom-style: dashed; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 200; margin: 10px 0 20px; padding: 0 0 16px;">Activity on {{ date }}</h2>
+              </td>
+            </tr>
+          </table>
+    
+          <!-- Story -->
+          {% for item in report %}
+            <table class="article" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0 0 40px; padding: 0;">
+              <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                  <a class="headline" href="#" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 21px; line-height: 24px; color: #5F4B4B; text-decoration: none; font-weight: 400; margin: 0; padding: 0;">{{ item.title }}</a>
+                  <table class="counts" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; border-collapse: collapse; margin: 10px 0 0; padding: 0;">
+                    <tbody style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                      <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 33%; text-align: center; border-right-width: 5px; border-right-color: #fff; border-right-style: solid; background-color: #F0F8FF; margin: 0; padding: 0;" align="center" bgcolor="#F0F8FF">
+                          <h4 class="count__title" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 22px; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: #888; margin: 0; padding: 0;">Likes</h4>
+                        </td>
+                        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 33%; text-align: center; border-right-width: 5px; border-right-color: #fff; border-right-style: solid; background-color: #F0F8FF; margin: 0; padding: 0;" align="center" bgcolor="#F0F8FF">
+                          <h4 class="count__title" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 22px; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: #888; margin: 0; padding: 0;">Shares</h4>
+                        </td>
+                        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 33%; text-align: center; background-color: #F0F8FF; margin: 0; padding: 0;" align="center" bgcolor="#F0F8FF">
+                          <h4 class="count__title" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 22px; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: #888; margin: 0; padding: 0;">Comments</h4>
+                        </td>
+                      </tr>
+                      <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                        <td class="count__count" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 33%; text-align: center; border-right-width: 5px; border-right-color: #fff; border-right-style: solid; background-color: #F0F8FF; margin: 0; padding: 0;" align="center" bgcolor="#F0F8FF">
+                          <h4 class="count__figure" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 38px; line-height: 36px; font-weight: 200; color: #5F4B4B; margin: 0 0 7px; padding: 0;">{{ item.new_like_count ? item.new_like_count : '0' }}</h4>
+                        </td>
+                        <td class="count__count" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 33%; text-align: center; border-right-width: 5px; border-right-color: #fff; border-right-style: solid; background-color: #F0F8FF; margin: 0; padding: 0;" align="center" bgcolor="#F0F8FF">
+                          <h4 class="count__figure" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 38px; line-height: 36px; font-weight: 200; color: #5F4B4B; margin: 0 0 7px; padding: 0;">{{ item.new_share_count ? item.new_share_count : '0' }}</h4>
+                        </td>
+                        <td class="count__count" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 33%; text-align: center; background-color: #F0F8FF; margin: 0; padding: 0;" align="center" bgcolor="#F0F8FF">
+                          <h4 class="count__figure" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 38px; line-height: 36px; font-weight: 200; color: #5F4B4B; margin: 0 0 7px; padding: 0;">{{ item.new_comment_count ? item.new_comment_count : '0' }}</h4>
+                        </td>
+                      </tr>
+                      <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                        <td class="count__total" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 24px; width: 33%; text-align: center; border-right-width: 5px; border-right-color: #fff; border-right-style: solid; color: #888; font-weight: 400; text-transform: uppercase; background-color: #DAEEFF; margin: 0; padding: 0;" align="center" bgcolor="#DAEEFF">
+                          {{ item.new_stats.elit_fb_likes }} total
+                        </td>
+                        <td class="count__total" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 24px; width: 33%; text-align: center; border-right-width: 5px; border-right-color: #fff; border-right-style: solid; color: #888; font-weight: 400; text-transform: uppercase; background-color: #DAEEFF; margin: 0; padding: 0;" align="center" bgcolor="#DAEEFF">
+                          {{ item.new_stats.elit_fb_shares }} total
+                        </td>
+                        <td class="count__total" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 24px; width: 33%; text-align: center; color: #888; font-weight: 400; text-transform: uppercase; background-color: #DAEEFF; margin: 0; padding: 0;" align="center" bgcolor="#DAEEFF">
+                          {{ item.new_shares.elit_fb_comments }} total
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td   style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                </td>
+              </tr>
+            </table>
+          {% endfor %}
+
+          <!-- Call to action -->
+          <table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0; padding: 0;">
+            <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+              <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                <!-- button -->
+                <table class="btn-primary" cellpadding="0" cellspacing="0" border="0" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: auto !important; margin: 0 auto 10px; padding: 0;">
+                  <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                    <td style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 14px; line-height: 1.6em; border-radius: 25px; text-align: center; vertical-align: top; background-color: #348eda; margin: 0; padding: 0;" align="center" bgcolor="#348eda" valign="top">
+                      <a href="http://thedo.osteopathic.org/wp-admin/tools.php?page=facebook-counts" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 2; color: #ef3f23; border-radius: 20px; display: inline-block; cursor: pointer; font-weight: 200; text-decoration: none; background-color: #fff; margin: 0; padding: 10px 20px; border: 1px solid #ef3f23;">View all Facebook stats for The DO</a>
+                    </td>
+                  </tr>
+                </table>
+                <!-- /button -->
+              </td>
+            </tr>
+          </table>
+          </div>
+          <!-- /content -->
+        </td>
+        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;"></td>
+      </tr>
+    </table>
+    <!-- /body -->
+  
+    <!-- footer -->
+    <table class="footer-wrap" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; clear: both !important; width: 100%; margin: 0; padding: 0;">
+      <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;"></td>
+        <td class="container" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; clear: both !important; display: block !important; max-width: 480px !important; margin: 0 auto; padding: 0;">
+          <!-- content -->
+          <div class="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; display: block; max-width: 480px; margin: 0 auto; padding: 0;">
+            <table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0; padding: 0;">
+              <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                <td align="center" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!-- /content -->
+        </td>
+        <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;"></td>
+      </tr>
+    </table>
+  </body>
+</html>
+

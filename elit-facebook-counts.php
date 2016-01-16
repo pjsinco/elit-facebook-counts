@@ -15,7 +15,49 @@ if (!defined('WPINC')) {
     die;
 }
 
-require_once ( 'vendor/autoload.php' );
+require_once( 'vendor/autoload.php' );
+
+/**
+ * Send an HTML email
+ *
+ */
+function elit_format_html_email($report_items = array())
+{
+
+  $date = date('F j, Y');
+
+  $template = elit_get_email_templater();
+
+  $email = $template->render(
+    plugin_dir_path(__FILE__) . 'includes/email.html',
+    array( 
+      'report' => $report_items, 
+      'date' => $date,
+    )
+  );
+
+  return $email;
+}
+
+/**
+ * Set up Twig templates
+ *
+ */
+function elit_get_email_templater()
+{
+
+  require_once( plugin_dir_path(__FILE__) . 'vendor/twig/twig/lib/Twig/Autoloader.php');
+
+  Twig_Autoloader::register();
+
+  $loader = new Twig_Loader_Filesystem(plugin_dir_path(__FILE__) . 'includes');
+
+  $twig = new Twig_Environment($loader);
+
+  return $twig;
+
+}
+
 
 if(!class_exists('WP_List_Table')){
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -173,6 +215,20 @@ function elit_fb_process_posts() {
     
             update_post_meta($post->id, 'elit_fb', serialize($newStats));
         }
+
+        /**
+         * Add new totals to each report item
+         *
+         */
+        for ($i = 0; $i < count($report); $i++) {
+          $newStatsArray = get_post_meta($report[$i]['id'], 'elit_fb', true);
+          $newStats = unserialize($newStatsArray);
+          $report[$i]['new_stats'] = $newStats;
+        }
+        
+        $email = elit_format_html_email($report);
+
+
         $emailBody = '';
         $emailBody .= PHP_EOL;
 //        $emailBody .= "* * * * *                        * * * * *" . PHP_EOL;
@@ -209,11 +265,12 @@ function elit_fb_process_posts() {
         }
 
         //if (!empty($report)) {
-            $html = file_get_contents(
-                plugin_dir_path(__FILE__) .  'includes/test-email-2.php'
-            );
+            //$html = file_get_contents(
+                //plugin_dir_path(__FILE__) .  'includes/test-email-2.php'
+            //);
             //$mailed = elit_email_report($emailBody);
-            $mailed = elit_email_report($html);
+            //$mailed = elit_email_report($html);
+            $mailed = elit_email_report($email);
         //}
 
         $logger->addInfo('Mailed? ' . ($mailed != null ? 'Yes' : 'No'));
@@ -225,7 +282,6 @@ add_action('elit_fb_cron_hook' , 'elit_fb_process_posts');
 function elit_set_html_content_type()
 {
     return 'text/html';
-
 }
 
 function elit_email_report($body)
@@ -237,13 +293,12 @@ function elit_email_report($body)
             'psinco@osteopathic.org',
             //'bjohnson@osteopathic.org',
         ),
-        "The DO's Facebook report: " . date('F j, Y'), 
+        "The DO: Facebookkeeping for" . date('F j, Y'), 
         $body
         //'Content-Type: text/plain'
     );
 
     remove_filter('wp_mail_content_type', 'elit_set_html_content_type');
-
 }
 
 class Elit_List_Table extends WP_List_Table
