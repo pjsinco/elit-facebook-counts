@@ -166,14 +166,18 @@ function elit_fb_process_posts() {
      );
     $logger->addInfo('Starting elit_fb_process_posts: ' . time());
     $posts = elit_fb_get_posts();
-    $logger->addInfo("\tHave posts? " . !empty($posts));
+    $logger->addInfo("\tHave posts? " . (!empty($posts) ? 'Yes' : 'No'));
     $report = array();
     if ($posts) {
         foreach ($posts as $post) {
-            $logger->addInfo("\t\tProcessing $post->id");
+            //$logger->addInfo("\t\tProcessing $post->id");
             $newStats = array();
             $url = FB_URL . urlencode(get_permalink($post->id));
             $info = wp_remote_get($url);
+            if (is_wp_error($info)) {
+              $logger->addInfo("Error querying Facebook; Post ID: $post->id");
+              continue;
+            }
             $xml = simplexml_load_string($info['body']);
             $newStats['elit_fb_shares'] = (string) $xml->link_stat->share_count;
             $newStats['elit_fb_likes'] = (string) $xml->link_stat->like_count;
@@ -232,7 +236,7 @@ function elit_fb_process_posts() {
 
         $email = elit_format_html_email($report);
 
-        $logger->addInfo('Email to send: ' . $email);
+        //$logger->addInfo('Email to send: ' . $email);
 
         $emailBody = '';
         $emailBody .= PHP_EOL;
